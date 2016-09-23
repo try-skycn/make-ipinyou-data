@@ -19,7 +19,10 @@ RUBBISH=.script
 
 all: init advertisers expand clean
 
-$(ORIGINALDATA):
+$(ORIGINALFOLDER)/$(DATANAME).zip:
+	@echo please link $(ORIGINALFOLDER)/$(DATANAME).zip to the data file $(DATANAME).zip; exit 1
+
+$(ORIGINALDATA): $(ORIGINALFOLDER)/$(DATANAME).zip
 	unzip $(ORIGINALFOLDER)/$(DATANAME).zip -d $(ORIGINALFOLDER)
 	mv $(ORIGINALFOLDER)/$(DATANAME)/* $(ORIGINALFOLDER)
 	rm -rf $(ORIGINALFOLDER)/$(DATANAME)
