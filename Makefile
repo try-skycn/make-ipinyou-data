@@ -1,13 +1,32 @@
-
-# makefile to create ipinyou dataset evaluation
 BASE=.
-ORIGINALFOLDER=./original-data/ipinyou.contest.dataset
-TRAIN=$(ORIGINALFOLDER)/train
-TEST=$(ORIGINALFOLDER)/test
+ORIGINALFOLDER=$(BASE)/original
+ORIGINALDATA=$(ORIGINALFOLDER)/README
+DATANAME=ipinyou.contest.dataset
+TMP=$(BASE)/.tmp
+TRAIN=$(TMP)/train
+TEST=$(TMP)/test
+TMPDATA=$(TMP)/data
+ALL=$(TMPDATA)/all
 
-all: init clk train.log test.log advertisers yzx
+SCRIPT=./script
 
-init: $(ORIGINALFOLDER)
+DATA=$(BASE)/data
+CLK=$(TMP)/clk.all.txt
+TRAINDATA=train
+TESTDATA=test
+
+RUBBISH=.script
+
+all: init advertisers expand clean
+
+$(ORIGINALDATA):
+	unzip $(ORIGINALFOLDER)/$(DATANAME).zip -d $(ORIGINALFOLDER)
+	mv $(ORIGINALFOLDER)/$(DATANAME)/* $(ORIGINALFOLDER)
+	rm -rf $(ORIGINALFOLDER)/$(DATANAME)
+	rm -f $(ORIGINALFOLDER)/$(DATANAME).zip
+
+init: $(ORIGINALDATA)
+	mkdir -p $(TMP)
 	mkdir -p $(TRAIN)
 	cp $(ORIGINALFOLDER)/training2nd/imp.*.bz2 $(TRAIN)
 	cp $(ORIGINALFOLDER)/training2nd/clk.*.bz2 $(TRAIN)
@@ -18,23 +37,28 @@ init: $(ORIGINALFOLDER)
 	cp $(ORIGINALFOLDER)/testing2nd/* $(TEST)
 	cp $(ORIGINALFOLDER)/testing3rd/* $(TEST)
 	bzip2 -d $(TEST)/*
-	mkdir $(BASE)/all	
+	mkdir -p $(ALL)
 
-clk: $(TRAIN)
-	cat $(TRAIN)/clk*.txt > $(BASE)/all/clk.all.txt
+$(CLK): $(TRAIN)
+	cat $(TRAIN)/clk*.txt > $@
 
-train.log: $(BASE)/schema.txt $(BASE)/all/clk.all.txt 
-	cat $(TRAIN)/imp*.txt | $(BASE)/python/mkdata.py $+ > $(BASE)/all/train.log.txt
-	$(BASE)/python/formalizeua.py $(BASE)/all/train.log.txt
+$(ALL)/$(TRAINDATA): $(SCRIPT)/schema.txt $(CLK)
+	cat $(TRAIN)/imp*.txt | $(SCRIPT)/mkdata.py $+ > $@
+	$(SCRIPT)/formalizeua.py $@
 
-test.log: $(BASE)/schema.txt
-	cat $(TEST)/*.txt | $(BASE)/python/mktest.py $+ > $(BASE)/all/test.log.txt
-	$(BASE)/python/formalizeua.py $(BASE)/all/test.log.txt
+$(ALL)/$(TESTDATA): $(SCRIPT)/schema.txt
+	cat $(TEST)/*.txt | $(SCRIPT)/mktest.py $+ > $@
+	$(SCRIPT)/formalizeua.py $@
 
-advertisers: $(BASE)/all/train.log.txt $(BASE)/all/test.log.txt
-	$(BASE)/python/splitadvertisers.py $(BASE) 25 $(BASE)/all/train.log.txt $(BASE)/all/test.log.txt
+advertisers: $(ALL)/$(TRAINDATA) $(ALL)/$(TESTDATA)
+	$(SCRIPT)/splitadvertisers.py $(TMPDATA) 25 $(ALL)/$(TRAINDATA) $(ALL)/$(TESTDATA)
 
-yzx: advertisers
-	bash $(BASE)/mkyzxdata.sh
+expand:
+	bash $(SCRIPT)/expand.sh
 
-
+clean:
+	rm -rf $(TMP)
+	rm -rf $(ORIGINALFOLDER)
+	mkdir -p $(RUBBISH)
+	mv Makefile $(RUBBISH)
+	mv script $(RUBBISH)

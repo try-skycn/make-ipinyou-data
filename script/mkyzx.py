@@ -15,6 +15,9 @@ f1sp = ["useragent", "slotprice"]
 
 f2s = ["weekday,region"]
 
+field_indices = {}
+
+
 def featTrans(name, content):
     content = content.lower()
     if name == "useragent":
@@ -63,6 +66,7 @@ for line in fi:
         first = False
         for i in range(0, len(s)):
             namecol[s[i].strip()] = i
+            field_indices[str(i)] = set()
             if i > 0:
                 featindex[str(i) + ':other'] = maxindex
                 maxindex += 1
@@ -94,7 +98,17 @@ featvalue = sorted(featindex.iteritems(), key=operator.itemgetter(1))
 fo = open(sys.argv[5], 'w')
 for fv in featvalue:
     fo.write(fv[0] + '\t' + str(fv[1]) + '\n')
+    if fv[0] != 'truncate':
+        field = fv[0].split(':')[0]
+        field_indices[field].add(str(fv[1]))
 fo.close()
+
+print 'category number for each field '
+field_indices_f = open(sys.argv[6], 'w')
+for key in field_indices.keys():
+    print key + ':' + str(len(field_indices[key]))
+    field_indices_f.write(key + '\t' + ','.join(field_indices[key]) + '\n')
+field_indices_f.close()
 
 # indexing train
 print 'indexing ' + sys.argv[1]
@@ -107,9 +121,9 @@ for line in fi:
         first = False
         continue
     s = line.split('\t')
-    fo.write(s[0] + ' ' + s[23]) # click + winning price
-    index = featindex['truncate']
-    fo.write(' ' + str(index) + ":1")
+    fo.write(s[0]) # click + winning price
+    # index = featindex['truncate']
+    # fo.write(' ' + str(index))
     for f in f1s: # every direct first order feature
         col = namecol[f]
         content = s[col]
@@ -117,7 +131,7 @@ for line in fi:
         if feat not in featindex:
             feat = str(col) + ':other'
         index = featindex[feat]
-        fo.write(' ' + str(index) + ":1")
+        fo.write(' ' + str(index))
     for f in f1sp:
         col = namecol[f]
         content = featTrans(f, s[col])
@@ -125,7 +139,7 @@ for line in fi:
         if feat not in featindex:
             feat = str(col) + ':other'
         index = featindex[feat]
-        fo.write(' ' + str(index) + ":1")
+        fo.write(' ' + str(index))
     col = namecol["usertag"]
     tags = getTags(s[col])
     for tag in tags:
@@ -133,7 +147,7 @@ for line in fi:
         if feat not in featindex:
             feat = str(col) + ':other'
         index = featindex[feat]
-        fo.write(' ' + str(index) + ":1")
+        fo.write(' ' + str(index))
     fo.write('\n')
 fo.close()
 
@@ -148,9 +162,9 @@ for line in fi:
         first = False
         continue
     s = line.split('\t')
-    fo.write(s[0] + ' ' + s[23]) # click + winning price
-    index = featindex['truncate']
-    fo.write(' ' + str(index) + ":1")
+    fo.write(s[0]) # click + winning price
+    # index = featindex['truncate']
+    # fo.write(' ' + str(index))
     for f in f1s: # every direct first order feature
         col = namecol[f]
         if col >= len(s):
@@ -161,7 +175,7 @@ for line in fi:
         if feat not in featindex:
             feat = str(col) + ':other'
         index = featindex[feat]
-        fo.write(' ' + str(index) + ":1")
+        fo.write(' ' + str(index))
     for f in f1sp:
         col = namecol[f]
         content = featTrans(f, s[col])
@@ -169,7 +183,7 @@ for line in fi:
         if feat not in featindex:
             feat = str(col) + ':other'
         index = featindex[feat]
-        fo.write(' ' + str(index) + ":1")
+        fo.write(' ' + str(index))
     col = namecol["usertag"]
     tags = getTags(s[col])
     for tag in tags:
@@ -177,6 +191,6 @@ for line in fi:
         if feat not in featindex:
             feat = str(col) + ':other'
         index = featindex[feat]
-        fo.write(' ' + str(index) + ":1")
+        fo.write(' ' + str(index))
     fo.write('\n')
 fo.close()
