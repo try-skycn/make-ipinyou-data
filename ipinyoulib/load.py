@@ -50,7 +50,7 @@ class DataManager:
 				elif typ == 'cate':
 					output.append(int(item) + offset)
 				elif typ == 'set':
-					output.append([int(element) + offset for element in item.split(',')])
+					output.append([int(element) + offset for element in item.split(',') if element != ''])
 		return np.array(output, dtype=object)
 
 
@@ -82,7 +82,6 @@ class DataLoader:
 			for key_entries, entry in zip(batch, entries):
 				key_entries.append(entry)
 			if check:
-				print(batch)
 				yield DataPack(**{key: np.stack(key_entries) for key, key_entries in zip(self._keys, batch)})
 				batch = []
 
