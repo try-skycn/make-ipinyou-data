@@ -17,7 +17,7 @@ TESTDATA=test
 
 RUBBISH=.script
 
-all: init advertisers expand clean
+all: init advertisers expand recycle
 
 $(ORIGINALFOLDER)/$(DATANAME).zip:
 	@echo please link $(ORIGINALFOLDER)/$(DATANAME).zip to the data file $(DATANAME).zip; exit 1
@@ -62,8 +62,13 @@ expand:
 clean:
 	rm -rf $(TMP)
 	rm -rf $(ORIGINALFOLDER)
+
+recycle: clean
 	mkdir -p $(RUBBISH)
 	mv Makefile $(RUBBISH)
 	mv script $(RUBBISH)
 	rm -rf $(RUBBISH)
-	rm -rf '.git'
+	git config core.sparseCheckout true
+	echo ipinyoulib/ >> .git/info/sparse-checkout
+	echo "/*" >> .gitignore
+	echo "!ipinyoulib/" >> .gitignore
