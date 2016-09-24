@@ -64,6 +64,7 @@ clean:
 	rm -rf $(ORIGINALFOLDER)
 
 recycle: clean
+	rm -rf $(SCRIPT)
 	git config core.sparseCheckout true
 	echo ipinyoulib/ >> .git/info/sparse-checkout
 	echo "/*" >> .gitignore
