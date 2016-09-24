@@ -1,1 +1,1 @@
-from load import load
+from ipinyoulib.load import load
