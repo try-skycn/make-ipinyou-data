@@ -250,6 +250,8 @@ class PackageManager():
 		self.tmp_folder = TmpFolder(TMP_DIR)
 		self.tmp_folder.__enter__()
 
+		self.meta['log'].append('load from %s' % path)
+
 	def _new_task(self):
 		new_path = os.path.join(TMP_DIR, 'step_' + str(self.command_ind))
 		os.makedirs(new_path, exist_ok=True)
@@ -280,7 +282,7 @@ class PackageManager():
 		output_path = os.path.join(new_path, file)
 
 		self.meta['data'][file] = sample(data_info.path, data_info, output_path, expected_num)
-		self.meta['log'].append('sample file=%s, expected_num%d' % (file, expected_num))
+		self.meta['log'].append('sample file=%s, expected_num=%d' % (file, expected_num))
 
 	def split(self, file, *args):
 		new_path = self._new_task()

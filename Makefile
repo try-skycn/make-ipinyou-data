@@ -65,3 +65,5 @@ clean:
 	mkdir -p $(RUBBISH)
 	mv Makefile $(RUBBISH)
 	mv script $(RUBBISH)
+	rm -rf $(RUBBISH)
+	rm -rf '.git'
