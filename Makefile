@@ -64,10 +64,6 @@ clean:
 	rm -rf $(ORIGINALFOLDER)
 
 recycle: clean
-	mkdir -p $(RUBBISH)
-	mv Makefile $(RUBBISH)
-	mv script $(RUBBISH)
-	rm -rf $(RUBBISH)
 	git config core.sparseCheckout true
 	echo ipinyoulib/ >> .git/info/sparse-checkout
 	echo "/*" >> .gitignore
