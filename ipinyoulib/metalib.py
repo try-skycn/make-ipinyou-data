@@ -104,3 +104,10 @@ class PackageInfo(dict):
 				result[key] = val
 		with open(os.path.join(path, '.meta'), 'w') as fmeta:
 			json.dump(result, fmeta, indent='\t')
+
+
+
+def is_positive(line):
+	return line[0] == '1'
+
+	

@@ -57,10 +57,6 @@ def random_selection(*args):
 	return len(args)
 
 
-def is_positive(line):
-	return line[0] == '1'
-
-
 def sample(input_path, input_info, output_path, expected_num):
 	input_size = input_info['size']
 	selection_rate = expected_num / input_size
