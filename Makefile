@@ -72,3 +72,4 @@ recycle: clean
 	echo ipinyoulib/ >> .git/info/sparse-checkout
 	echo "/*" >> .gitignore
 	echo "!ipinyoulib/" >> .gitignore
+	git checkout HEAD
