@@ -24,6 +24,7 @@ class DataManager:
 		self._offset_list = []
 		self.intervals = []
 		self.size = 0
+		self.num = 0
 
 		for field in fieldpak:
 			if field['name'] in selection:
@@ -36,6 +37,7 @@ class DataManager:
 					self._offset_list.append(self.size)
 					self.intervals.append((self.size, self.size + field['size']))
 					self.size += field['size']
+				self.num += 1
 			else:
 				self._filter_list.append(False)
 				self._type_list.append(None)
