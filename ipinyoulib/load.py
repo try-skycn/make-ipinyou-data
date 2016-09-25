@@ -83,7 +83,7 @@ class DataLoader:
 				key_entries.append(entry)
 			if check:
 				yield DataPack(**{key: np.stack(key_entries) for key, key_entries in zip(self._keys, batch)})
-				batch = []
+				batch = [[] for _ in self._keys]
 
 	def get(self, file, batch_size, cyclic):
 		size = None if cyclic else (self.meta['data'][file]['size'] // batch_size)
