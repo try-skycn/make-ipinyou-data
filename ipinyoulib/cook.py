@@ -284,6 +284,15 @@ class PackageManager():
 		self.meta['data'][file] = sample(data_info.path, data_info, output_path, expected_num)
 		self.meta['log'].append('sample file=%s, expected_num=%d' % (file, expected_num))
 
+	def sample_out(self, file, file_out, expected_num):
+		new_path = self._new_task()
+
+		data_info = self.meta['data'][file]
+		output_path = os.path.join(new_path, file_out)
+
+		self.meta['data'][file_out] = sample(data_info.path, data_info, output_path, expected_num)
+		self.meta['log'].append('sample file=%s, file-out=%s, expected_num=%d' % (file, file_out, expected_num))
+
 	def split(self, file, *args):
 		new_path = self._new_task()
 		args = list(args) + [(file, None)]
